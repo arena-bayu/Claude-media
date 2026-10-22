@@ -80,7 +80,11 @@ export default function Dashboard({ agents }: Props) {
         <article key={p.id} style={{ border: "1px solid #2c3a33", borderRadius: 8, padding: 12, margin: "12px 0" }}>
           <small>{p.status} · oleh {p.createdBy}{p.scheduledAt ? ` · ${new Date(p.scheduledAt).toLocaleString("id-ID")}` : ""}</small>
           <p style={{ whiteSpace: "pre-wrap" }}>{p.caption}</p>
-          {p.slides?.map((s, i) => <p key={i} style={{ opacity: 0.8 }}>Slide {i + 1}: {s}</p>)}
+          {p.platform === "instagram" && (
+            <div style={{ display: "flex", gap: 8, overflowX: "auto" }}>
+              {(p.slides?.length ? p.slides : [p.caption]).map((_, i) => <img key={i} src={`/api/slides/${p.id}/${i}.png`} alt={`Slide ${i + 1}`} height={160} style={{ borderRadius: 6 }} />)}
+            </div>
+          )}
           {p.factCheckNotes && <p style={{ color: "#f0c36b" }}>Cek fakta: {p.factCheckNotes}</p>}
           {p.sources.length > 0 && <p>Sumber: {p.sources.join(", ")}</p>}
           <div style={{ display: "flex", gap: 8 }}>

@@ -11,3 +11,8 @@ npm run worker                # (terminal lain) publish tiap menit + putaran kan
 ```
 Alur: **Jalankan kantor** → draft masuk tab *review* → **Approve** → **Ardi: jadwalkan** → worker publish.
 Publish Threads sungguhan butuh `THREADS_ACCESS_TOKEN` + `THREADS_USER_ID`; tanpa itu dry-run (dicatat di log).
+
+## Instagram
+Butuh akun Professional + Facebook Page + app di developers.facebook.com. Isi `INSTAGRAM_ACCESS_TOKEN`,
+`INSTAGRAM_USER_ID`, dan `PUBLIC_BASE_URL` (URL publik app ini; Instagram mengunduh gambar slide dari
+`/api/slides/<id>/<n>.png`, jadi `localhost` tidak bisa). Opsional `BRAND_NAME` untuk watermark slide.

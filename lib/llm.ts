@@ -39,12 +39,13 @@ export async function draftPost(topic: string, platform: Platform): Promise<Draf
   if (!hasLLM())
     return {
       caption: `[DRAFT PLACEHOLDER] ${topic}`,
+      slides: platform === "instagram" ? [topic, "Poin 1 (placeholder)", "Poin 2 (placeholder)", "Ikuti untuk info lainnya"] : undefined,
       sources: [],
       factCheckNotes: "Belum ada API key; isi ANTHROPIC_API_KEY untuk draft sungguhan.",
     };
   const t = await ask(
     agent("nico").system,
-    `Topik: ${topic}\nPlatform: ${platform}\nBalas HANYA JSON: {"caption": string, "slides": string[] (kosong jika bukan carousel), "sources": string[], "factCheckNotes": string (klaim yang perlu dicek manusia)}`,
+    `Topik: ${topic}\nPlatform: ${platform}\nBalas HANYA JSON: {"caption": string, "slides": string[] (WAJIB 5-7 slide singkat, maks 25 kata per slide, slide pertama = hook, terakhir = ajakan; kosongkan jika platform bukan instagram), "sources": string[], "factCheckNotes": string (klaim yang perlu dicek manusia)}`,
   );
   return jsonOf(t);
 }

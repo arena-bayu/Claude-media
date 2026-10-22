@@ -1,14 +1,19 @@
 {
   "name": "claude-media",
   "private": true,
-  "scripts": { "dev": "next dev", "build": "next build", "start": "next start",
-    "worker": "node scripts/worker.mjs" },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "worker": "node scripts/worker.mjs"
+  },
   "dependencies": {
     "gray-matter": "^4.0.3",
     "marked": "^12.0.2",
     "next": "^14.2.5",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
