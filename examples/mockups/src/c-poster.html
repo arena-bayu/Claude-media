@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8">
+<link rel="stylesheet" href="node_modules/@fontsource/bebas-neue/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/fraunces/600-italic.css">
+<link rel="stylesheet" href="node_modules/@fontsource/fraunces/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/archivo/500.css">
+<style>
+  :root { --red: #8f1d1d; --cream: #f4e6c8; --mustard: #e3a72f; --night: #1b1414; }
+  body { margin: 0; background: #555; display: flex; gap: 40px; padding: 40px; }
+  .slide { width: 1080px; height: 1350px; position: relative; overflow: hidden; flex: none; }
+  /* cetakan sablon: butiran + sedikit pudar */
+  .slide::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .2  0 0 0 0 .15  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+  .s1 { background: var(--red); color: var(--cream); }
+  /* matahari terbit / sinar ala poster perang */
+  .rays { position: absolute; left: 50%; top: 420px; width: 2400px; height: 2400px; margin: -1200px 0 0 -1200px;
+    background: repeating-conic-gradient(from 0deg, rgba(227,167,47,.28) 0 6deg, transparent 6deg 12deg); border-radius: 50%; }
+  .sun { position: absolute; left: 50%; top: 420px; width: 360px; height: 360px; margin: -180px 0 0 -180px; border-radius: 50%; background: var(--mustard); }
+  .clock { position: absolute; left: 50%; top: 420px; width: 300px; height: 300px; margin: -150px 0 0 -150px; }
+  .kicker { position: absolute; top: 76px; left: 0; right: 0; text-align: center; font: 600 italic 40px/1 "Fraunces", serif; color: var(--mustard); }
+  .title { position: absolute; left: 0; right: 0; top: 690px; text-align: center; font: 400 232px/.84 "Bebas Neue", sans-serif; letter-spacing: 2px; margin: 0;
+    text-shadow: 6px 6px 0 var(--night); }
+  .tag { position: absolute; left: 0; right: 0; top: 1105px; text-align: center; font: 600 italic 44px/1.2 "Fraunces", serif; color: var(--cream); }
+  .billing { position: absolute; left: 90px; right: 90px; bottom: 60px; text-align: center; font: 400 31px/1.05 "Bebas Neue", sans-serif;
+    letter-spacing: 1.5px; color: rgba(244,230,200,.8); transform: scaleY(1.25); transform-origin: bottom; }
+
+  .s2 { background: var(--cream); color: var(--night); }
+  .stub { position: absolute; left: 90px; right: 90px; top: 120px; height: 1060px; background: var(--red); color: var(--cream); border-radius: 28px;
+    -webkit-mask: radial-gradient(circle 34px at 0 480px, transparent 33px, #000 34px) left/51% 100% no-repeat,
+                  radial-gradient(circle 34px at 100% 480px, transparent 33px, #000 34px) right/51% 100% no-repeat; }
+  .stub .perf { position: absolute; left: 50px; right: 50px; top: 478px; border-top: 5px dashed rgba(244,230,200,.55); }
+  .stub .top { padding: 60px 70px 0; }
+  .stub .label { font: 400 44px/1 "Bebas Neue"; letter-spacing: 6px; color: var(--mustard); }
+  .stub h2 { margin: 18px 0 0; font: 400 150px/.85 "Bebas Neue"; letter-spacing: 1px; }
+  .stub .body { position: absolute; left: 70px; right: 70px; top: 530px; }
+  .stub p { font: 400 40px/1.45 "Fraunces", serif; margin: 0 0 34px; }
+  .stub .meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; border-top: 3px solid rgba(244,230,200,.4); padding-top: 26px; }
+  .stub .meta div { font: 500 26px/1.3 "Archivo"; color: rgba(244,230,200,.75); }
+  .stub .meta b { display: block; font: 400 56px/1 "Bebas Neue"; color: var(--cream); letter-spacing: 1px; }
+  .s2 .foot { position: absolute; left: 90px; right: 90px; bottom: 80px; display: flex; justify-content: space-between; font: 400 38px/1 "Bebas Neue"; letter-spacing: 3px; color: var(--red); }
+</style></head><body>
+
+<section class="slide s1">
+  <div class="rays"></div>
+  <div class="sun"></div>
+  <svg class="clock" viewBox="0 0 300 300"><circle cx="150" cy="150" r="138" fill="#f4e6c8" stroke="#1b1414" stroke-width="10"/>
+    <path d="M150 150 L150 150 A120 120 0 0 1 252 214 Z" fill="#8f1d1d"/>
+    <g stroke="#1b1414" stroke-width="8" stroke-linecap="round"><path d="M150 30v24M270 150h-24M150 270v-24M30 150h24"/><path d="M150 150V62M150 150l66 40"/></g>
+    <circle cx="150" cy="150" r="12" fill="#1b1414"/></svg>
+  <div class="kicker">Berdasarkan kisah nyata</div>
+  <h1 class="title">Perang<br>Kilat</h1>
+  <div class="tag">Dimulai pukul 09.02. Usai dalam 38–45 menit.</div>
+  <div class="billing">Zanzibar · 27 Agustus 1896 · Sumber: Wikipedia &amp; History Today · Seri “Kejadian yang terdengar seperti karangan” 1 dari 3 · Media Kita</div>
+</section>
+
+<section class="slide s2">
+  <div class="stub">
+    <div class="top"><div class="label">Sinopsis · Tiket 01</div><h2>Perang Anglo-<br>Zanzibar</h2></div>
+    <div class="perf"></div>
+    <div class="body">
+      <p>Sultan baru naik takhta tanpa restu Inggris. Kapal-kapal Inggris menembaki istana, dan pertempuran usai dalam <span style="white-space:nowrap">38–45 menit</span>, tergantung catatan yang dipakai.</p>
+      <div class="meta"><div><b>1896</b>Tahun</div><div><b>&lt; 1 jam</b>Durasi</div><div><b>Zanzibar</b>Lokasi</div></div>
+    </div>
+  </div>
+  <div class="foot"><span>Media Kita</span><span>2 / 5</span></div>
+</section>
+</body></html>
