@@ -1,6 +1,6 @@
 AI bukan tukang sulap: kualitas hasilnya sangat tergantung cara kita memintanya.
 
-Lima kebiasaan kecil di carousel ini bisa langsung kamu pakai di ChatGPT, Claude, atau Gemini: kasih konteks, tunjukkan contoh, cek klaim penting, pecah tugas besar, dan revisi alih-alih mulai dari nol.
+Tiga kebiasaan di carousel ini bisa langsung kamu pakai di ChatGPT, Claude, atau Gemini: kasih konteks, tunjukkan contoh, dan cek klaim penting.
 
 Yang paling sering dilupakan? Nomor 3. AI bisa menjawab dengan sangat yakin padahal salah, jadi angka, tanggal, dan aturan tetap harus dicek ke sumber aslinya.
 

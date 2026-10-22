@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
 import { LUCY_SYSTEM, NICO_RESEARCH_SYSTEM, NICO_WRITE_SYSTEM } from "./agents";
+import { MAX_SLIDES } from "./slide";
 import { TIMEZONE } from "./time";
 import type { Platform, Settings } from "./types";
 
@@ -123,15 +124,20 @@ export type Draft = z.infer<typeof DraftSchema>;
 
 const FORMAT: Record<Platform, string> = {
   instagram:
-    "Format Instagram carousel: 5–8 slide. Slide 1 adalah hook singkat (maks 12 kata). Slide berikutnya masing-masing satu poin, maks 35 kata. " +
-    "Slide terakhir ajakan (simpan/bagikan/ikuti). Caption maks 1.500 karakter dengan 3–5 hashtag relevan di akhir.",
+    "Format Instagram carousel: 3–5 slide, tidak boleh lebih. Slide 1 adalah hook singkat (maks 10 kata). " +
+    "Slide tengah masing-masing satu poin dengan format persis \"N. Judul poin. Penjelasan\": judul maks 4 kata, penjelasan maks 30 kata. " +
+    "Slide terakhir ajakan singkat (simpan/bagikan/ikuti), maks 18 kata. Tanpa emoji di slide. " +
+    "Caption maks 1.500 karakter dengan 3–5 hashtag relevan di akhir.",
   threads:
     "Format Threads: satu post teks, maks 450 karakter termasuk spasi, tanpa hashtag berlebihan (maks 1). Slides kosong. " +
     "Buka dengan kalimat yang memancing orang berhenti scroll, tutup dengan pertanyaan untuk diskusi.",
 };
 
+/** Batas teks per slide supaya tetap terbaca di ukuran font minimum. */
+const MAX_SLIDE_CHARS = 240;
+
 const LIMITS: Record<Platform, { caption: number; minSlides: number; maxSlides: number }> = {
-  instagram: { caption: 2200, minSlides: 2, maxSlides: 10 },
+  instagram: { caption: 2200, minSlides: 2, maxSlides: MAX_SLIDES },
   threads: { caption: 500, minSlides: 0, maxSlides: 0 },
 };
 
@@ -143,6 +149,9 @@ export function formatProblems(platform: Platform, d: Pick<Draft, "caption" | "s
   if (d.caption.length > l.caption) problems.push(`caption ${d.caption.length} karakter (maks ${l.caption})`);
   if (d.slides.length < l.minSlides || d.slides.length > l.maxSlides)
     problems.push(`jumlah slide ${d.slides.length} (harus ${l.minSlides}–${l.maxSlides})`);
+  d.slides.forEach((x, i) => {
+    if (x.length > MAX_SLIDE_CHARS) problems.push(`slide ${i + 1} terlalu panjang (${x.length} karakter, maks ${MAX_SLIDE_CHARS})`);
+  });
   return problems;
 }
 
@@ -203,7 +212,10 @@ function demoDraft(platform: Platform, title: string, feedback?: string): Draft 
   const note = feedback ? ` (revisi: ${feedback})` : "";
   return {
     caption: `Contoh caption untuk "${title}"${note}. Isi ANTHROPIC_API_KEY agar Nico meriset dan menulis sungguhan.`,
-    slides: platform === "instagram" ? [title, "Poin pertama (demo)", "Poin kedua (demo)", "Simpan & bagikan postingan ini"] : [],
+    slides:
+      platform === "instagram"
+        ? [title, "1. Poin pertama. Contoh penjelasan singkat (demo).", "2. Poin kedua. Contoh penjelasan singkat (demo).", "Simpan dan bagikan postingan ini."]
+        : [],
     sources: [],
     claims: ["Mode demo: tidak ada klaim yang diriset"],
   };

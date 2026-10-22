@@ -64,7 +64,7 @@ export default function PostCard({ post, tz, onAction }: Props) {
             <textarea className="textarea" value={caption} onChange={(e) => setCaption(e.target.value)} rows={6} />
           </label>
           {post.platform === "instagram" && (
-            <label className="field">Slide (pisahkan dengan baris berisi ---)
+            <label className="field">Slide (maks 5; pisahkan dengan baris berisi ---; slide poin: &quot;1. Judul. Penjelasan&quot;)
               <textarea className="textarea" value={slidesText} onChange={(e) => setSlidesText(e.target.value)} rows={8} />
             </label>
           )}
