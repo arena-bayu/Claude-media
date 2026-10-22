@@ -1,13 +1,16 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import "./globals.css";
 
-export const metadata = { title: "AI Media Office" };
+export const metadata: Metadata = {
+  title: "AI Media Office",
+  description: "Kantor virtual agen AI untuk menjalankan media sosial, dengan review manusia sebelum tayang.",
+};
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="id">
-      <body style={{ background: "#0d1210", color: "#e6ede9", fontFamily: "system-ui, sans-serif", margin: 0 }}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

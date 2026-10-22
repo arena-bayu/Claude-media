@@ -1,26 +1,71 @@
 import { NextResponse } from "next/server";
-import { readPosts, writePosts } from "@/lib/store";
+import { z } from "zod";
+import { formatProblems } from "@/lib/claude";
+import { getPost, log, updatePost } from "@/lib/db";
+import { retryPost, scheduleApproved, startRevision } from "@/lib/office";
+import { currentUser } from "@/lib/session";
+import { assertCanApply, WorkflowError } from "@/lib/workflow";
 
-type Action = { action: "approve" | "reject" | "schedule"; by?: string; scheduledAt?: string };
+const Body = z.discriminatedUnion("action", [
+  z.object({ action: z.literal("approve"), scheduledAt: z.iso.datetime().optional() }),
+  z.object({ action: z.literal("reject"), note: z.string().max(2000).default("") }),
+  z.object({ action: z.literal("revise"), feedback: z.string().trim().min(3).max(2000) }),
+  z.object({ action: z.literal("edit"), caption: z.string().max(5000), slides: z.array(z.string().max(1000)).max(10) }),
+  z.object({ action: z.literal("unschedule") }),
+  z.object({ action: z.literal("retry") }),
+]);
 
-// Hanya manusia (lewat endpoint ini) yang bisa memindah status melewati "review".
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-  const body = (await req.json()) as Action;
-  const posts = readPosts();
-  const post = posts.find((p) => p.id === params.id);
-  if (!post) return NextResponse.json({ error: "not found" }, { status: 404 });
+// Semua aksi di sini adalah keputusan manusia; nama reviewer dicatat di log.
+export async function PATCH(req: Request, ctx: RouteContext<"/api/posts/[id]">) {
+  const user = await currentUser();
+  if (!user) return NextResponse.json({ error: "Belum login" }, { status: 401 });
+  const { id } = await ctx.params;
+  const post = getPost(id);
+  if (!post) return NextResponse.json({ error: "Post tidak ditemukan" }, { status: 404 });
+  const parsed = Body.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Input tidak valid" }, { status: 400 });
+  const body = parsed.data;
 
-  if (body.action === "reject") post.status = "rejected";
-  else if (body.action === "approve") {
-    if (post.status !== "review") return NextResponse.json({ error: "bukan di review" }, { status: 409 });
-    post.status = "approved";
-    post.approvedBy = body.by ?? "human";
-  } else if (body.action === "schedule") {
-    if (post.status !== "approved") return NextResponse.json({ error: "belum approved" }, { status: 409 });
-    if (!body.scheduledAt) return NextResponse.json({ error: "scheduledAt wajib" }, { status: 400 });
-    post.status = "scheduled";
-    post.scheduledAt = body.scheduledAt;
+  try {
+    assertCanApply(body.action, post.status);
+    switch (body.action) {
+      case "approve": {
+        const problems = formatProblems(post.platform, post);
+        if (problems.length) return NextResponse.json({ error: `Belum bisa di-approve: ${problems.join("; ")}` }, { status: 422 });
+        if (body.scheduledAt && new Date(body.scheduledAt) <= new Date())
+          return NextResponse.json({ error: "Waktu tayang harus di masa depan" }, { status: 422 });
+        if (body.scheduledAt) {
+          updatePost(id, { status: "scheduled", scheduledAt: body.scheduledAt, reviewedBy: user, error: null });
+          log(user, `Approve & jadwalkan manual "${post.title}"`);
+        } else {
+          updatePost(id, { status: "approved", reviewedBy: user, error: null });
+          log(user, `Approve "${post.title}"`);
+          scheduleApproved();
+        }
+        break;
+      }
+      case "reject":
+        updatePost(id, { status: "rejected", reviewedBy: user, reviewNote: body.note, scheduledAt: null });
+        log(user, `Reject "${post.title}"${body.note ? `: ${body.note}` : ""}`);
+        break;
+      case "revise":
+        startRevision(id, body.feedback, user);
+        break;
+      case "edit":
+        updatePost(id, { caption: body.caption, slides: post.platform === "threads" ? [] : body.slides });
+        log(user, `Mengedit "${post.title}"`);
+        break;
+      case "unschedule":
+        updatePost(id, { status: "review", scheduledAt: null });
+        log(user, `Menarik "${post.title}" dari jadwal, kembali ke review`);
+        break;
+      case "retry":
+        retryPost(post, user);
+        break;
+    }
+  } catch (e) {
+    if (e instanceof WorkflowError) return NextResponse.json({ error: e.message }, { status: 409 });
+    throw e;
   }
-  writePosts(posts);
-  return NextResponse.json(post);
+  return NextResponse.json(getPost(id));
 }

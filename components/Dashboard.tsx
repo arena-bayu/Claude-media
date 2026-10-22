@@ -1,106 +1,165 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
-import type { Platform, Post } from "@/lib/types";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { AgentState, LogEntry, Platform, Post, Settings } from "@/lib/types";
+import Calendar from "./Calendar";
+import Office from "./Office";
+import PostCard, { type ActionBody } from "./PostCard";
+import SettingsDialog from "./SettingsDialog";
+import { dayKeyIn } from "./zone";
 
-type Props = { agents: { id: string; name: string; office: string }[] };
+type State = {
+  user: string | null;
+  posts: Post[];
+  agents: AgentState[];
+  logs: LogEntry[];
+  settings: Settings;
+  officeRunning: boolean;
+  demo: boolean;
+  model: string;
+  timezone: string;
+};
+
 type Tab = "semua" | "review" | "terjadwal";
-type Log = { at: string; agent: string; message: string };
 
-const btn = { padding: "6px 12px", borderRadius: 6, border: "1px solid #2c3a33", background: "#16201b", color: "inherit", cursor: "pointer" } as const;
-const on = (active: boolean) => ({ ...btn, borderColor: active ? "#7ee0a8" : "#2c3a33" });
-const dayKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-const DAYS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+const NEEDS_ACTION = new Set<Post["status"]>(["review", "failed", "drafting", "revising"]);
 
-export default function Dashboard({ agents }: Props) {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [logs, setLogs] = useState<Log[]>([]);
-  const [tab, setTab] = useState<Tab>("semua");
-  const [platform, setPlatform] = useState<Platform>("threads");
+export default function Dashboard() {
+  const [state, setState] = useState<State | null>(null);
+  const [tab, setTab] = useState<Tab>("review");
+  const [platform, setPlatform] = useState<Platform | "all">("all");
   const [day, setDay] = useState<string | null>(null);
-  const [niche, setNiche] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [error, setError] = useState("");
 
   const load = useCallback(async () => {
-    setPosts(await (await fetch("/api/posts")).json());
-    setLogs(await (await fetch("/api/log")).json());
+    const res = await fetch("/api/state", { cache: "no-store" });
+    if (res.status === 401) return void (window.location.href = "/login");
+    if (res.ok) setState(await res.json());
   }, []);
-  useEffect(() => { load(); const t = setInterval(load, 15000); return () => clearInterval(t); }, [load]);
 
-  const week = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() + i); return d; });
-  const forPlatform = posts.filter((p) => p.platform === platform);
-  const visible = forPlatform
-    .filter((p) => tab === "semua" || (tab === "review" ? p.status === "review" : p.status === "scheduled"))
-    .filter((p) => !day || (p.scheduledAt && dayKey(new Date(p.scheduledAt)) === day));
+  const busy = Boolean(state?.officeRunning || state?.agents.some((a) => a.busy));
+  useEffect(() => {
+    void load();
+    const t = setInterval(load, busy ? 3000 : 15000);
+    return () => clearInterval(t);
+  }, [load, busy]);
 
-  async function act(id: string, action: string, scheduledAt?: string) {
-    const res = await fetch(`/api/posts/${id}`, { method: "PATCH", body: JSON.stringify({ action, scheduledAt }) });
-    if (!res.ok) alert((await res.json()).error);
-    load();
+  const tz = state?.timezone ?? "Asia/Jakarta";
+  const today = dayKeyIn(new Date(), tz);
+  const selected = day ?? today;
+
+  const byPlatform = useMemo(
+    () => (state?.posts ?? []).filter((p) => platform === "all" || p.platform === platform),
+    [state, platform],
+  );
+  const postDay = (p: Post) => dayKeyIn(new Date(p.publishedAt ?? p.scheduledAt ?? p.createdAt), tz);
+  const counts = useMemo(() => {
+    const c: Record<string, number> = {};
+    for (const p of byPlatform) if (p.scheduledAt && p.status !== "rejected") c[postDay(p)] = (c[postDay(p)] ?? 0) + 1;
+    return c;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [byPlatform, tz]);
+
+  const reviewCount = byPlatform.filter((p) => NEEDS_ACTION.has(p.status)).length;
+  const visible = byPlatform
+    .filter((p) => {
+      if (tab === "review") return NEEDS_ACTION.has(p.status);
+      if (tab === "terjadwal") return (p.status === "scheduled" || p.status === "published" || p.status === "publishing") && postDay(p) === selected;
+      return postDay(p) === selected;
+    })
+    .sort((a, b) => (a.scheduledAt ?? a.createdAt).localeCompare(b.scheduledAt ?? b.createdAt));
+
+  async function onAction(id: string, body: ActionBody): Promise<string | null> {
+    const res = await fetch(`/api/posts/${id}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+    await load();
+    return res.ok ? null : ((await res.json()).error ?? "Gagal");
   }
 
-  async function runOffice(count: number) {
-    setBusy(true);
-    await fetch("/api/office", { method: "POST", body: JSON.stringify({ niche: niche || "Umum", count, platform }) });
-    setBusy(false); load();
+  async function runOffice() {
+    setError("");
+    const res = await fetch("/api/office", { method: "POST" });
+    if (!res.ok) setError((await res.json()).error ?? "Gagal memulai");
+    await load();
   }
+
+  async function logout() {
+    await fetch("/api/login", { method: "DELETE" });
+    window.location.href = "/login";
+  }
+
+  if (!state) return <main className="shell"><p className="empty">Memuat kantor…</p></main>;
 
   return (
-    <div style={{ maxWidth: 760, margin: "0 auto", padding: 16 }}>
-      <h1>AI Media Office</h1>
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-        {agents.map((a) => <div key={a.id} style={{ ...btn, cursor: "default" }}><strong>{a.name}</strong> · {a.office}</div>)}
-      </div>
+    <main className="shell">
+      <header className="topbar">
+        <h1>{state.settings.brand} <span className="eyebrow">office</span></h1>
+        <span className="eyebrow">{tz.replace("_", " ")} · {state.model}</span>
+        <span className="spacer" />
+        <button className="btn" onClick={() => setSettingsOpen(true)}>Brief brand</button>
+        <button className="btn primary" onClick={runOffice} disabled={state.officeRunning}>
+          {state.officeRunning ? "Kantor bekerja…" : "Jalankan kantor"}
+        </button>
+        {state.user && <span className="eyebrow">{state.user}</span>}
+        {state.user && <button className="btn small" onClick={logout}>Keluar</button>}
+      </header>
 
-      <div style={{ display: "flex", gap: 8, margin: "16px 0" }}>
-        <input value={niche} onChange={(e) => setNiche(e.target.value)} placeholder="Niche media (mis. finansial anak muda)" style={{ ...btn, flex: 1 }} />
-        <button style={btn} disabled={busy} onClick={() => runOffice(3)}>{busy ? "Bekerja..." : "Jalankan kantor"}</button>
-        <button style={btn} disabled={busy} onClick={() => runOffice(0)}>Ardi: jadwalkan</button>
-      </div>
+      {state.demo && (
+        <div className="banner">
+          Mode demo: <code>ANTHROPIC_API_KEY</code> belum diisi, jadi Lucy & Nico menghasilkan konten placeholder. Alur review, jadwal, dan publikasi tetap bisa dicoba.
+        </div>
+      )}
+      {error && <div className="banner">{error}</div>}
 
-      <div style={{ display: "flex", gap: 6, overflowX: "auto" }}>
-        {week.map((d) => {
-          const k = dayKey(d);
-          const n = forPlatform.filter((p) => p.scheduledAt && dayKey(new Date(p.scheduledAt)) === k).length;
-          return (
-            <button key={k} style={{ ...on(day === k), minWidth: 56 }} onClick={() => setDay(day === k ? null : k)}>
-              <div style={{ fontSize: 11 }}>{DAYS[d.getDay()]}</div><strong>{d.getDate()}</strong><div style={{ fontSize: 11 }}>{n || "–"}</div>
-            </button>
-          );
-        })}
-      </div>
-
-      <div style={{ display: "flex", gap: 8, margin: "16px 0 8px" }}>
-        {(["instagram", "threads"] as Platform[]).map((p) => <button key={p} style={on(p === platform)} onClick={() => setPlatform(p)}>{p}</button>)}
-        <span style={{ flex: 1 }} />
-        {(["semua", "review", "terjadwal"] as Tab[]).map((t) => <button key={t} style={on(t === tab)} onClick={() => setTab(t)}>{t}</button>)}
-      </div>
-
-      {visible.length === 0 && <p style={{ opacity: 0.6 }}>Belum ada konten.</p>}
-      {visible.map((p) => (
-        <article key={p.id} style={{ border: "1px solid #2c3a33", borderRadius: 8, padding: 12, margin: "12px 0" }}>
-          <small>{p.status} · oleh {p.createdBy}{p.scheduledAt ? ` · ${new Date(p.scheduledAt).toLocaleString("id-ID")}` : ""}</small>
-          <p style={{ whiteSpace: "pre-wrap" }}>{p.caption}</p>
-          {p.platform === "instagram" && (
-            <div style={{ display: "flex", gap: 8, overflowX: "auto" }}>
-              {(p.slides?.length ? p.slides : [p.caption]).map((_, i) => <img key={i} src={`/api/slides/${p.id}/${i}.png`} alt={`Slide ${i + 1}`} height={160} style={{ borderRadius: 6 }} />)}
+      <div className="grid">
+        <section>
+          <div className="panel">
+            <div className="panel-head">
+              <h2>Kantor</h2>
+              <span className="spacer" style={{ flex: 1 }} />
+              <span className="eyebrow">{busy ? "● Bekerja" : "○ Siaga"}</span>
             </div>
-          )}
-          {p.factCheckNotes && <p style={{ color: "#f0c36b" }}>Cek fakta: {p.factCheckNotes}</p>}
-          {p.sources.length > 0 && <p>Sumber: {p.sources.join(", ")}</p>}
-          <div style={{ display: "flex", gap: 8 }}>
-            {p.status === "review" && <>
-              <button style={btn} onClick={() => act(p.id, "approve")}>Approve</button>
-              <button style={btn} onClick={() => act(p.id, "reject")}>Reject</button>
-            </>}
-            {p.status === "approved" && <span style={{ opacity: 0.7 }}>Approved, menunggu Ardi menjadwalkan</span>}
+            <Office agents={state.agents} />
           </div>
-        </article>
-      ))}
+          <div className="panel">
+            <div className="panel-head"><h2>Aktivitas</h2></div>
+            <div className="log">
+              {state.logs.length === 0 && <p className="empty">Belum ada aktivitas. Klik “Jalankan kantor”.</p>}
+              {state.logs.map((l) => (
+                <div key={l.id}>
+                  {new Date(l.at).toLocaleTimeString("id-ID", { timeZone: tz, hour: "2-digit", minute: "2-digit" })} <b>{l.agent}</b> {l.message}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <h3>Aktivitas agen</h3>
-      <div style={{ fontFamily: "monospace", fontSize: 13, opacity: 0.85 }}>
-        {logs.map((l, i) => <div key={i}>{new Date(l.at).toLocaleTimeString("id-ID")} [{l.agent}] {l.message}</div>)}
+        <section className="panel">
+          <Calendar selected={selected} today={today} counts={counts} onSelect={setDay} />
+          <div className="seg" style={{ marginTop: 12 }}>
+            {(["semua", "review", "terjadwal"] as Tab[]).map((t) => (
+              <button key={t} aria-pressed={tab === t} onClick={() => setTab(t)}>
+                {t === "semua" ? "Semua" : t === "review" ? "Review" : "Terjadwal"}
+                {t === "review" && reviewCount > 0 && <span className="count">{reviewCount}</span>}
+              </button>
+            ))}
+          </div>
+          <div className="seg" style={{ marginTop: 8 }}>
+            {(["all", "instagram", "threads"] as const).map((p) => (
+              <button key={p} aria-pressed={platform === p} onClick={() => setPlatform(p)}>
+                {p === "all" ? "Semua platform" : p === "instagram" ? "Instagram" : "Threads"}
+              </button>
+            ))}
+          </div>
+          <div style={{ marginTop: 12 }}>
+            {visible.length === 0 && (
+              <p className="empty">{tab === "review" ? "Tidak ada yang menunggu review." : "Tidak ada konten di hari ini."}</p>
+            )}
+            {visible.map((p) => <PostCard key={`${p.id}:${p.updatedAt}`} post={p} tz={tz} onAction={onAction} />)}
+          </div>
+        </section>
       </div>
-    </div>
+
+      <SettingsDialog open={settingsOpen} settings={state.settings} onClose={() => setSettingsOpen(false)} onSaved={load} />
+    </main>
   );
 }
