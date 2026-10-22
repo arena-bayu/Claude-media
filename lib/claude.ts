@@ -23,7 +23,7 @@ function assertNotRefused(res: { stop_reason: string | null; stop_details?: { ca
 }
 
 const brandBrief = (s: Settings) =>
-  `Brand: ${s.brand}\nNiche: ${s.niche}\nAudiens: ${s.audience}\nGaya bahasa: ${s.voice}`;
+  `Brand: ${s.brand}\nNiche: ${s.niche}\nAudiens: ${s.audience}\nGaya bahasa: ${s.voice}\nPilar konten: ${s.pillars.join(", ")}`;
 
 const today = () => new Date().toLocaleDateString("id-ID", { timeZone: TIMEZONE, dateStyle: "full" });
 
@@ -32,6 +32,7 @@ const today = () => new Date().toLocaleDateString("id-ID", { timeZone: TIMEZONE,
 const PlanSchema = z.object({
   topics: z.array(
     z.object({
+      pillar: z.string().describe("Salah satu pilar konten dari brief, ditulis persis"),
       title: z.string().describe("Judul kerja topik"),
       angle: z.string().describe("Sudut pandang spesifik dan apa yang harus diriset"),
       platform: z.enum(["instagram", "threads"]),
@@ -40,11 +41,20 @@ const PlanSchema = z.object({
 });
 export type PlannedTopic = z.infer<typeof PlanSchema>["topics"][number];
 
-export async function planTopics(s: Settings, recentTitles: string[]): Promise<PlannedTopic[]> {
+export type RecentPost = { title: string; pillar: string };
+
+/** Pilar yang paling jarang dibahas akhir-akhir ini, untuk dibagi rata. */
+export function pillarBalance(pillars: string[], recent: RecentPost[]): string {
+  const count = (p: string) => recent.filter((r) => r.pillar === p).length;
+  return pillars.map((p) => `${p}: ${count(p)} post`).join("; ");
+}
+
+export async function planTopics(s: Settings, recent: RecentPost[]): Promise<PlannedTopic[]> {
   const platforms = s.platforms.length ? s.platforms : (["threads"] as Platform[]);
   if (!hasClaude()) {
     return Array.from({ length: s.postsPerRun }, (_, i) => ({
-      title: `[DEMO] Topik ${i + 1} tentang ${s.niche}`,
+      pillar: s.pillars[i % s.pillars.length] ?? "",
+      title: `[DEMO] Topik ${i + 1}: ${s.pillars[i % s.pillars.length] ?? s.niche}`,
       angle: "Mode demo: isi ANTHROPIC_API_KEY untuk rencana sungguhan.",
       platform: platforms[i % platforms.length],
     }));
@@ -61,14 +71,19 @@ export async function planTopics(s: Settings, recentTitles: string[]): Promise<P
         content:
           `${brandBrief(s)}\nHari ini: ${today()}\n\n` +
           `Rencanakan tepat ${s.postsPerRun} topik untuk putaran ini, dibagi di platform: ${platforms.join(", ")}.\n` +
-          `Instagram = carousel edukatif; Threads = teks pendek yang memancing diskusi.\n\n` +
-          `Topik yang sudah dibahas baru-baru ini (jangan diulang):\n${recentTitles.map((t) => `- ${t}`).join("\n") || "- (belum ada)"}`,
+          `Instagram = carousel berisi beberapa fakta atau satu kisah yang dipecah per slide; Threads = satu fakta singkat yang memancing obrolan.\n\n` +
+          `Jumlah post per pilar akhir-akhir ini (prioritaskan yang paling sedikit): ${pillarBalance(s.pillars, recent)}\n\n` +
+          `Topik yang sudah dibahas (jangan diulang atau dibuat mirip):\n${recent.map((r) => `- [${r.pillar || "-"}] ${r.title}`).join("\n") || "- (belum ada)"}`,
       },
     ],
   });
   assertNotRefused(res);
   const topics = res.parsed_output?.topics ?? [];
-  return topics.filter((t) => platforms.includes(t.platform)).slice(0, s.postsPerRun);
+  // Pilar di luar brief (salah ketik model) dipetakan ke pilar pertama agar tetap terlacak.
+  return topics
+    .filter((t) => platforms.includes(t.platform))
+    .map((t) => ({ ...t, pillar: s.pillars.includes(t.pillar) ? t.pillar : (s.pillars[0] ?? t.pillar) }))
+    .slice(0, s.postsPerRun);
 }
 
 // ---------------- Nico: riset + tulis ----------------

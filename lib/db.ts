@@ -17,6 +17,7 @@ function db(): DatabaseSync {
     CREATE TABLE IF NOT EXISTS posts (
       id TEXT PRIMARY KEY,
       platform TEXT NOT NULL,
+      pillar TEXT NOT NULL DEFAULT '',
       title TEXT NOT NULL,
       angle TEXT NOT NULL DEFAULT '',
       caption TEXT NOT NULL DEFAULT '',
@@ -55,6 +56,9 @@ function db(): DatabaseSync {
       json TEXT NOT NULL
     );
   `);
+  // Migrasi kolom yang ditambahkan setelah rilis pertama.
+  const cols = new Set((conn.prepare(`PRAGMA table_info(posts)`).all() as { name: string }[]).map((c) => c.name));
+  if (!cols.has("pillar")) conn.exec(`ALTER TABLE posts ADD COLUMN pillar TEXT NOT NULL DEFAULT ''`);
   // Status "sibuk" dari proses sebelumnya (mis. server restart di tengah kerja) tidak lagi valid.
   conn.exec(`UPDATE agents SET busy = 0, task = ''`);
   conn.exec(`UPDATE posts SET status = 'failed', error = 'Penulisan terputus karena server restart' WHERE status = 'drafting'`);
@@ -94,12 +98,12 @@ export function postsWithStatus(...statuses: Status[]): Post[] {
   return (db().prepare(q).all(...statuses) as Row[]).map(toPost);
 }
 
-export function createPost(p: { platform: Platform; title: string; angle: string; createdBy: string }): Post {
+export function createPost(p: { platform: Platform; pillar: string; title: string; angle: string; createdBy: string }): Post {
   const t = now();
   const id = randomUUID();
   db()
-    .prepare(`INSERT INTO posts (id, platform, title, angle, status, createdBy, createdAt, updatedAt) VALUES (?, ?, ?, ?, 'drafting', ?, ?, ?)`)
-    .run(id, p.platform, p.title, p.angle, p.createdBy, t, t);
+    .prepare(`INSERT INTO posts (id, platform, pillar, title, angle, status, createdBy, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, 'drafting', ?, ?, ?)`)
+    .run(id, p.platform, p.pillar, p.title, p.angle, p.createdBy, t, t);
   return getPost(id)!;
 }
 
@@ -150,9 +154,10 @@ export function agentStates(): AgentState[] {
 
 export const DEFAULT_SETTINGS: Settings = {
   brand: process.env.BRAND_NAME ?? "Media Kita",
-  niche: "Teknologi & AI untuk pekerja Indonesia",
-  audience: "Profesional muda 20–35 tahun di Indonesia",
-  voice: "Santai tapi kredibel, bahasa Indonesia sehari-hari, tanpa clickbait",
+  niche: "Trivia ringan yang awet: sejarah, film, dan kejadian unik dari seluruh dunia",
+  audience: "Anak muda Indonesia 18–35 tahun yang suka fakta unik untuk bahan obrolan",
+  voice: "Santai dan bercerita, seperti teman yang antusias berbagi fakta; tanpa clickbait; jujur kalau sumber berbeda pendapat",
+  pillars: ["Trivia sejarah", "Trivia film", "Kejadian unik"],
   postsPerRun: 3,
   platforms: ["instagram", "threads"],
   slots: ["07:00", "12:00", "19:00"],

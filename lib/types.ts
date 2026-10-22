@@ -19,6 +19,7 @@ export type Status =
 export type Post = {
   id: string;
   platform: Platform;
+  pillar: string; // pilar konten, mis. "Trivia sejarah"
   title: string;
   angle: string;
   caption: string;
@@ -56,6 +57,7 @@ export type Settings = {
   niche: string;
   audience: string;
   voice: string;
+  pillars: string[]; // pilar konten yang digilir Lucy
   postsPerRun: number;
   platforms: Platform[];
   slots: string[]; // jam tayang lokal, "HH:MM"

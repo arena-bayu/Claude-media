@@ -50,6 +50,7 @@ export default function PostCard({ post, tz, onAction }: Props) {
       <div className="meta">
         <span className={`badge ${post.status}`}>{STATUS_LABEL[post.status]}</span>
         <span>{post.platform === "instagram" ? "Instagram · carousel" : "Threads"}</span>
+        {post.pillar && <span className="badge">{post.pillar}</span>}
         {post.revision > 0 && <span>revisi #{post.revision}</span>}
         {post.scheduledAt && <span>· {fmtDateTime(post.scheduledAt, tz)}</span>}
         {post.reviewedBy && <span>· {post.reviewedBy}</span>}

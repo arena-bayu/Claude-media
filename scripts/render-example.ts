@@ -1,10 +1,10 @@
 // Render contoh carousel ke PNG memakai renderer yang sama dengan app.
-// Pakai: node --experimental-strip-types scripts/render-example.ts examples/instagram-carousel [Nama Brand]
+// Pakai: node --experimental-strip-types scripts/render-example.ts examples/trivia-sejarah [Nama Brand]
 import fs from "node:fs";
 import path from "node:path";
 import { renderSlide } from "../lib/slide.ts";
 
-const dir = process.argv[2] ?? "examples/instagram-carousel";
+const dir = process.argv[2] ?? "examples/trivia-sejarah";
 const brand = process.argv[3] ?? "Media Kita";
 const post = JSON.parse(fs.readFileSync(path.join(dir, "post.json"), "utf8")) as { slides: string[] };
 

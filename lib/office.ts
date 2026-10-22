@@ -33,13 +33,13 @@ async function runOffice(trigger: string) {
   log("lucy", `Putaran kantor dimulai (${trigger})${hasClaude() ? "" : " — MODE DEMO tanpa Claude API"}`);
 
   setAgent("lucy", "Menyusun rencana konten");
-  const recent = listPosts().slice(0, 40).map((p) => p.title);
+  const recent = listPosts().slice(0, 60).map((p) => ({ title: p.title, pillar: p.pillar }));
   const topics = await planTopics(s, recent);
   setAgent("lucy", null);
-  log("lucy", `Rencana: ${topics.map((t) => `${t.title} (${t.platform})`).join(" | ") || "tidak ada topik"}`);
+  log("lucy", `Rencana: ${topics.map((t) => `${t.title} (${t.pillar}, ${t.platform})`).join(" | ") || "tidak ada topik"}`);
 
   for (const t of topics) {
-    const post = createPost({ platform: t.platform, title: t.title, angle: t.angle, createdBy: "nico" });
+    const post = createPost({ platform: t.platform, pillar: t.pillar, title: t.title, angle: t.angle, createdBy: "nico" });
     await draftPost(post);
   }
   scheduleApproved();

@@ -97,3 +97,24 @@ describe("render slide", () => {
     expect(png.readUInt32BE(20)).toBe(1350);
   });
 });
+
+describe("pilar konten", () => {
+  it("menghitung jumlah post per pilar untuk dibagi rata", async () => {
+    const { pillarBalance } = await import("@/lib/claude");
+    const recent = [
+      { title: "a", pillar: "Trivia sejarah" },
+      { title: "b", pillar: "Trivia sejarah" },
+      { title: "c", pillar: "Trivia film" },
+    ];
+    expect(pillarBalance(["Trivia sejarah", "Trivia film", "Kejadian unik"], recent)).toBe(
+      "Trivia sejarah: 2 post; Trivia film: 1 post; Kejadian unik: 0 post",
+    );
+  });
+
+  it("mode demo menggilir pilar", async () => {
+    const { planTopics } = await import("@/lib/claude");
+    const { DEFAULT_SETTINGS } = await import("@/lib/db");
+    const topics = await planTopics({ ...DEFAULT_SETTINGS, postsPerRun: 3 }, []);
+    expect(topics.map((t) => t.pillar)).toEqual(["Trivia sejarah", "Trivia film", "Kejadian unik"]);
+  });
+});

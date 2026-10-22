@@ -8,6 +8,7 @@ const Settings = z.object({
   niche: z.string().trim().min(3).max(300),
   audience: z.string().trim().min(3).max(300),
   voice: z.string().trim().min(3).max(300),
+  pillars: z.array(z.string().trim().min(2).max(40)).min(1).max(8),
   postsPerRun: z.number().int().min(1).max(10),
   platforms: z.array(z.enum(["instagram", "threads"])).min(1),
   slots: z.array(z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Format jam HH:MM")).min(1).max(12),
