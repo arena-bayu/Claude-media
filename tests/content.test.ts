@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { formatProblems, keepKnownSources } from "@/lib/claude";
-import { renderSlide, wrap } from "@/lib/slide";
+import sharp from "sharp";
+import { blocksFor, H, PAD, renderSlide, textWidth, W, wrap } from "@/lib/slide";
 
 describe("keepKnownSources", () => {
   it("membuang URL yang tidak ditemukan saat riset", () => {
@@ -27,7 +28,37 @@ describe("formatProblems", () => {
 
 describe("slide", () => {
   it("memecah kata yang terlalu panjang", () => {
-    for (const line of wrap("https://contoh.com/" + "x".repeat(80) + " kata biasa", 20)) expect(line.length).toBeLessThanOrEqual(20);
+    const lines = wrap("https://contoh.com/" + "x".repeat(80) + " kata biasa", 400, 40, 400);
+    expect(lines.length).toBeGreaterThan(2);
+    for (const line of lines) expect(textWidth(line, 40, 400)).toBeLessThanOrEqual(400);
+  });
+
+  it("teks tidak keluar dari margin kiri/kanan", async () => {
+    const samples = [
+      "Hasil AI sering meleset? Coba 5 kebiasaan ini",
+      '1. Kasih konteks. Sebutkan untuk siapa hasilnya dan apa tujuannya. "Buat email" kalah jauh dari "Buat email follow-up ke klien yang belum bayar invoice, nadanya sopan tapi tegas."',
+      "Simpan postingan ini buat dicoba besok di kantor. Kirim ke teman satu tim yang sering pakai AI.",
+      "WWWWWWWW MMMMMMMM WWWWWWWW MMMMMMMM WWWWWWWW MMMMMMMM", // huruf terlebar
+    ];
+    for (const [i, text] of samples.entries()) {
+      const png = await renderSlide(text, i === 0 ? 0 : 1, 7, "");
+      // threshold: hanya teks terang (bukan aksen/latar)
+      const { data, info } = await sharp(png).raw().toBuffer({ resolveWithObject: true });
+      let minX = W, maxX = 0;
+      // Area teks saja (di atas footer brand/progress).
+      for (let y = 0; y < H - 160; y++)
+        for (let x = 0; x < W; x++) {
+          const o = (y * W + x) * info.channels;
+          if (data[o] > 180 && data[o + 1] > 180) { minX = Math.min(minX, x); maxX = Math.max(maxX, x); }
+        }
+      expect(minX, text).toBeGreaterThanOrEqual(PAD - 8);
+      expect(maxX, text).toBeLessThanOrEqual(W - PAD + 8);
+    }
+  });
+
+  it("slide bernomor dipecah jadi judul + isi", () => {
+    expect(blocksFor("2. Tunjukkan contoh. Tempel satu contoh.", false).map((b) => b.text)).toEqual(["2. Tunjukkan contoh.", "Tempel satu contoh."]);
+    expect(blocksFor("Tanpa nomor di sini", false)).toHaveLength(1);
   });
 
   it("merender PNG 1080x1350", async () => {
