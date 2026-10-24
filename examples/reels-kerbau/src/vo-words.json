@@ -1,0 +1,773 @@
+{
+ "01-pembuka": [
+  {
+   "text": "Di",
+   "start": 0.102,
+   "end": 0.279
+  },
+  {
+   "text": "sebuah",
+   "start": 0.279,
+   "end": 0.632
+  },
+  {
+   "text": "desa",
+   "start": 0.632,
+   "end": 1.23
+  },
+  {
+   "text": "ada",
+   "start": 1.542,
+   "end": 1.814
+  },
+  {
+   "text": "seekor",
+   "start": 1.814,
+   "end": 2.181
+  },
+  {
+   "text": "kerbau",
+   "start": 2.181,
+   "end": 2.82
+  },
+  {
+   "text": "Setiap",
+   "start": 3.734,
+   "end": 4.155
+  },
+  {
+   "text": "hari",
+   "start": 4.155,
+   "end": 4.672
+  },
+  {
+   "text": "dari",
+   "start": 4.984,
+   "end": 5.215
+  },
+  {
+   "text": "subuh",
+   "start": 5.215,
+   "end": 5.568
+  },
+  {
+   "text": "sampai",
+   "start": 5.568,
+   "end": 5.867
+  },
+  {
+   "text": "magrib",
+   "start": 5.867,
+   "end": 6.424
+  },
+  {
+   "text": "ia",
+   "start": 6.696,
+   "end": 6.914
+  },
+  {
+   "text": "membajak",
+   "start": 6.914,
+   "end": 7.362
+  },
+  {
+   "text": "sawah",
+   "start": 7.362,
+   "end": 7.96
+  },
+  {
+   "text": "Bertahun-tahun",
+   "start": 8.87,
+   "end": 9.93
+  },
+  {
+   "text": "tanpa",
+   "start": 10.215,
+   "end": 10.596
+  },
+  {
+   "text": "henti",
+   "start": 10.596,
+   "end": 11.207
+  }
+ ],
+ "02-patuh": [
+  {
+   "text": "Kerbau",
+   "start": 0.102,
+   "end": 0.455
+  },
+  {
+   "text": "itu",
+   "start": 0.455,
+   "end": 0.727
+  },
+  {
+   "text": "hanya",
+   "start": 0.727,
+   "end": 0.999
+  },
+  {
+   "text": "diajari",
+   "start": 0.999,
+   "end": 1.42
+  },
+  {
+   "text": "satu",
+   "start": 1.42,
+   "end": 1.719
+  },
+  {
+   "text": "hal",
+   "start": 1.719,
+   "end": 2.154
+  },
+  {
+   "text": "menarik",
+   "start": 2.426,
+   "end": 2.806
+  },
+  {
+   "text": "bajak",
+   "start": 2.806,
+   "end": 3.445
+  },
+  {
+   "text": "Pemiliknya",
+   "start": 4.359,
+   "end": 4.943
+  },
+  {
+   "text": "tidak",
+   "start": 4.943,
+   "end": 5.188
+  },
+  {
+   "text": "butuh",
+   "start": 5.188,
+   "end": 5.433
+  },
+  {
+   "text": "kerbau",
+   "start": 5.433,
+   "end": 5.854
+  },
+  {
+   "text": "yang",
+   "start": 5.854,
+   "end": 6.03
+  },
+  {
+   "text": "pintar",
+   "start": 6.03,
+   "end": 6.655
+  },
+  {
+   "text": "Ia",
+   "start": 7.565,
+   "end": 7.836
+  },
+  {
+   "text": "butuh",
+   "start": 7.836,
+   "end": 8.108
+  },
+  {
+   "text": "kerbau",
+   "start": 8.108,
+   "end": 8.516
+  },
+  {
+   "text": "yang",
+   "start": 8.516,
+   "end": 8.706
+  },
+  {
+   "text": "patuh",
+   "start": 8.706,
+   "end": 9.29
+  }
+ ],
+ "03-jerami": [
+  {
+   "text": "Upahnya",
+   "start": 0.1,
+   "end": 0.657
+  },
+  {
+   "text": "segenggam",
+   "start": 0.657,
+   "end": 1.146
+  },
+  {
+   "text": "jerami",
+   "start": 1.146,
+   "end": 1.812
+  },
+  {
+   "text": "Cukup",
+   "start": 2.729,
+   "end": 3.082
+  },
+  {
+   "text": "untuk",
+   "start": 3.082,
+   "end": 3.327
+  },
+  {
+   "text": "kuat",
+   "start": 3.327,
+   "end": 3.53
+  },
+  {
+   "text": "bekerja",
+   "start": 3.53,
+   "end": 3.952
+  },
+  {
+   "text": "besok",
+   "start": 3.952,
+   "end": 4.536
+  },
+  {
+   "text": "Tapi",
+   "start": 5.462,
+   "end": 5.72
+  },
+  {
+   "text": "tidak",
+   "start": 5.72,
+   "end": 5.951
+  },
+  {
+   "text": "pernah",
+   "start": 5.951,
+   "end": 6.168
+  },
+  {
+   "text": "cukup",
+   "start": 6.168,
+   "end": 6.495
+  },
+  {
+   "text": "untuk",
+   "start": 6.495,
+   "end": 6.685
+  },
+  {
+   "text": "berhenti",
+   "start": 6.685,
+   "end": 7.364
+  },
+  {
+   "text": "walau",
+   "start": 7.677,
+   "end": 8.003
+  },
+  {
+   "text": "hanya",
+   "start": 8.003,
+   "end": 8.247
+  },
+  {
+   "text": "sehari",
+   "start": 8.247,
+   "end": 8.859
+  }
+ ],
+ "04-tali": [
+  {
+   "text": "Tali",
+   "start": 0.102,
+   "end": 0.415
+  },
+  {
+   "text": "di",
+   "start": 0.415,
+   "end": 0.51
+  },
+  {
+   "text": "hidungnya",
+   "start": 0.51,
+   "end": 0.958
+  },
+  {
+   "text": "sebenarnya",
+   "start": 0.958,
+   "end": 1.461
+  },
+  {
+   "text": "tipis",
+   "start": 1.461,
+   "end": 2.086
+  },
+  {
+   "text": "Sekali",
+   "start": 3.001,
+   "end": 3.395
+  },
+  {
+   "text": "sentak",
+   "start": 3.395,
+   "end": 4.02
+  },
+  {
+   "text": "mungkin",
+   "start": 4.237,
+   "end": 4.645
+  },
+  {
+   "text": "putus",
+   "start": 4.645,
+   "end": 5.242
+  },
+  {
+   "text": "Tapi",
+   "start": 6.168,
+   "end": 6.427
+  },
+  {
+   "text": "kerbau",
+   "start": 6.427,
+   "end": 6.766
+  },
+  {
+   "text": "sudah",
+   "start": 6.766,
+   "end": 7.038
+  },
+  {
+   "text": "lupa",
+   "start": 7.038,
+   "end": 7.581
+  },
+  {
+   "text": "bahwa",
+   "start": 7.908,
+   "end": 8.234
+  },
+  {
+   "text": "ia",
+   "start": 8.234,
+   "end": 8.383
+  },
+  {
+   "text": "bisa",
+   "start": 8.383,
+   "end": 8.614
+  },
+  {
+   "text": "melangkah",
+   "start": 8.614,
+   "end": 9.008
+  },
+  {
+   "text": "ke",
+   "start": 9.008,
+   "end": 9.076
+  },
+  {
+   "text": "arah",
+   "start": 9.076,
+   "end": 9.293
+  },
+  {
+   "text": "lain",
+   "start": 9.293,
+   "end": 9.796
+  }
+ ],
+ "05-cukup": [
+  {
+   "text": "Setiap",
+   "start": 0.102,
+   "end": 0.51
+  },
+  {
+   "text": "kali",
+   "start": 0.51,
+   "end": 0.727
+  },
+  {
+   "text": "ia",
+   "start": 0.727,
+   "end": 0.877
+  },
+  {
+   "text": "mulai",
+   "start": 0.877,
+   "end": 1.08
+  },
+  {
+   "text": "bertanya",
+   "start": 1.08,
+   "end": 1.787
+  },
+  {
+   "text": "pemiliknya",
+   "start": 2.086,
+   "end": 2.548
+  },
+  {
+   "text": "berbisik",
+   "start": 2.548,
+   "end": 3.241
+  },
+  {
+   "text": "Bersyukurlah",
+   "start": 3.485,
+   "end": 4.423
+  },
+  {
+   "text": "Kamu",
+   "start": 5.336,
+   "end": 5.676
+  },
+  {
+   "text": "masih",
+   "start": 5.676,
+   "end": 5.989
+  },
+  {
+   "text": "punya",
+   "start": 5.989,
+   "end": 6.247
+  },
+  {
+   "text": "jerami",
+   "start": 6.247,
+   "end": 6.912
+  },
+  {
+   "text": "Dan",
+   "start": 7.823,
+   "end": 8.135
+  },
+  {
+   "text": "kerbau",
+   "start": 8.135,
+   "end": 8.529
+  },
+  {
+   "text": "pun",
+   "start": 8.529,
+   "end": 8.787
+  },
+  {
+   "text": "merasa",
+   "start": 8.787,
+   "end": 9.114
+  },
+  {
+   "text": "cukup",
+   "start": 9.114,
+   "end": 9.684
+  }
+ ],
+ "06-anak": [
+  {
+   "text": "Lalu",
+   "start": 0.1,
+   "end": 0.494
+  },
+  {
+   "text": "anaknya",
+   "start": 0.494,
+   "end": 0.929
+  },
+  {
+   "text": "lahir",
+   "start": 0.929,
+   "end": 1.527
+  },
+  {
+   "text": "Belum",
+   "start": 2.459,
+   "end": 2.677
+  },
+  {
+   "text": "sempat",
+   "start": 2.677,
+   "end": 2.976
+  },
+  {
+   "text": "belajar",
+   "start": 2.976,
+   "end": 3.356
+  },
+  {
+   "text": "apa-apa",
+   "start": 3.356,
+   "end": 4.049
+  },
+  {
+   "text": "lehernya",
+   "start": 4.361,
+   "end": 4.837
+  },
+  {
+   "text": "sudah",
+   "start": 4.837,
+   "end": 5.082
+  },
+  {
+   "text": "dipasangi",
+   "start": 5.082,
+   "end": 5.571
+  },
+  {
+   "text": "bajak",
+   "start": 5.571,
+   "end": 5.965
+  },
+  {
+   "text": "yang",
+   "start": 5.965,
+   "end": 6.101
+  },
+  {
+   "text": "sama",
+   "start": 6.101,
+   "end": 6.644
+  }
+ ],
+ "07-twist": [
+  {
+   "text": "Kerbau",
+   "start": 0.101,
+   "end": 0.536
+  },
+  {
+   "text": "itu",
+   "start": 0.536,
+   "end": 0.794
+  },
+  {
+   "text": "tidak",
+   "start": 0.794,
+   "end": 1.039
+  },
+  {
+   "text": "malas",
+   "start": 1.039,
+   "end": 1.609
+  },
+  {
+   "text": "Dialah",
+   "start": 2.524,
+   "end": 2.986
+  },
+  {
+   "text": "yang",
+   "start": 2.986,
+   "end": 3.149
+  },
+  {
+   "text": "paling",
+   "start": 3.149,
+   "end": 3.407
+  },
+  {
+   "text": "keras",
+   "start": 3.407,
+   "end": 3.652
+  },
+  {
+   "text": "bekerja",
+   "start": 3.652,
+   "end": 4.345
+  },
+  {
+   "text": "Masalahnya",
+   "start": 5.272,
+   "end": 5.856
+  },
+  {
+   "text": "ada",
+   "start": 5.856,
+   "end": 6.046
+  },
+  {
+   "text": "pada",
+   "start": 6.046,
+   "end": 6.25
+  },
+  {
+   "text": "tali",
+   "start": 6.25,
+   "end": 6.793
+  },
+  {
+   "text": "pada",
+   "start": 7.092,
+   "end": 7.351
+  },
+  {
+   "text": "jerami",
+   "start": 7.351,
+   "end": 8.016
+  },
+  {
+   "text": "dan",
+   "start": 8.315,
+   "end": 8.56
+  },
+  {
+   "text": "pada",
+   "start": 8.56,
+   "end": 8.777
+  },
+  {
+   "text": "siapa",
+   "start": 8.777,
+   "end": 9.171
+  },
+  {
+   "text": "yang",
+   "start": 9.171,
+   "end": 9.321
+  },
+  {
+   "text": "memegang",
+   "start": 9.321,
+   "end": 9.687
+  },
+  {
+   "text": "sawah",
+   "start": 9.688,
+   "end": 10.285
+  }
+ ],
+ "08-kesimpulan": [
+  {
+   "text": "Begitulah",
+   "start": 0.1,
+   "end": 0.725
+  },
+  {
+   "text": "kelas",
+   "start": 0.725,
+   "end": 0.997
+  },
+  {
+   "text": "miskin",
+   "start": 0.997,
+   "end": 1.635
+  },
+  {
+   "text": "Bukan",
+   "start": 2.568,
+   "end": 2.894
+  },
+  {
+   "text": "karena",
+   "start": 2.894,
+   "end": 3.166
+  },
+  {
+   "text": "tidak",
+   "start": 3.166,
+   "end": 3.397
+  },
+  {
+   "text": "mau",
+   "start": 3.397,
+   "end": 3.533
+  },
+  {
+   "text": "bekerja",
+   "start": 3.533,
+   "end": 4.212
+  },
+  {
+   "text": "tapi",
+   "start": 4.511,
+   "end": 4.851
+  },
+  {
+   "text": "karena",
+   "start": 4.851,
+   "end": 5.109
+  },
+  {
+   "text": "tidak",
+   "start": 5.109,
+   "end": 5.353
+  },
+  {
+   "text": "pernah",
+   "start": 5.353,
+   "end": 5.625
+  },
+  {
+   "text": "diberi",
+   "start": 5.625,
+   "end": 5.87
+  },
+  {
+   "text": "kesempatan",
+   "start": 5.87,
+   "end": 6.413
+  },
+  {
+   "text": "untuk",
+   "start": 6.413,
+   "end": 6.658
+  },
+  {
+   "text": "tumbuh",
+   "start": 6.658,
+   "end": 7.188
+  },
+  {
+   "text": "dan",
+   "start": 7.418,
+   "end": 7.677
+  },
+  {
+   "text": "menjadi",
+   "start": 7.677,
+   "end": 8.043
+  },
+  {
+   "text": "kaya",
+   "start": 8.043,
+   "end": 8.587
+  },
+  {
+   "text": "Yang",
+   "start": 9.495,
+   "end": 9.726
+  },
+  {
+   "text": "perlu",
+   "start": 9.726,
+   "end": 9.971
+  },
+  {
+   "text": "dilepas",
+   "start": 9.971,
+   "end": 10.378
+  },
+  {
+   "text": "bukan",
+   "start": 10.378,
+   "end": 10.636
+  },
+  {
+   "text": "kerbaunya",
+   "start": 10.636,
+   "end": 11.438
+  },
+  {
+   "text": "tapi",
+   "start": 11.71,
+   "end": 12.009
+  },
+  {
+   "text": "talinya",
+   "start": 12.009,
+   "end": 12.674
+  }
+ ]
+}
